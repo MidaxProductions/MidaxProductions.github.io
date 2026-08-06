@@ -458,152 +458,164 @@
 
 <span class="kw">local</span> ParallaxController = {}
 ParallaxController.__index = ParallaxController
-
 <span class="cm">-----==== Dependencies ====-----</span>
 
 <span class="cm">-- [[ Services ]]</span>
 
-<span class="kw">local</span> RunService = game:GetService(<span class="str">"RunService"</span>)
-<span class="kw">local</span> TweenService = game:GetService(<span class="str">"TweenService"</span>)
-<span class="kw">local</span> Camera = workspace.CurrentCamera
+<span class="kw">const</span> RunService = game:<span class="ty">GetService</span>(<span class="str">"RunService"</span>)
+<span class="kw">const</span> TweenService = game:<span class="ty">GetService</span>(<span class="str">"TweenService"</span>)
+<span class="kw">const</span> Camera = workspace.CurrentCamera
 
 <span class="cm">-- [[ Const ]]</span>
 
-<span class="kw">local</span> DEFAULT_TWEENINFO = TweenInfo.new(<span class="num">0.65</span>, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+<span class="kw">const</span> CLONE_NAME = <span class="str">"Depth_Clone"</span>
+<span class="kw">const</span> DEFAULT_TWEENINFO = TweenInfo.<span class="fn">new</span>(<span class="num">0.65</span>, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
 
 <span class="cm">-- [[ Types ]]</span>
 
-<span class="kw">local</span> Types = require(<span class="str">"../Types"</span>)
+<span class="kw">const</span> Types = require(<span class="str">"../Types"</span>)
 
-<span class="kw">export type</span> PublicType = Types.IParallaxController
-<span class="kw">type</span> PrivateType = PublicType &amp; <span class="kw">typeof</span>(ParallaxController) &amp; {
-  LayersFolder <span class="ty">: Folder</span>,
-  Layers <span class="ty">:</span> {
-    [GuiBase]<span class="ty">:</span> {
-      Position<span class="ty">: UDim2</span>,
-      Depth<span class="ty">: number</span>,
-      StartingPosition<span class="ty">: UDim2</span>,
-    }
-  },
-
-  <span class="cm">-- // Other</span>
-  StartingPosition <span class="ty">: UDim2</span>,
-
-  <span class="cm">-- // Connections</span>
-  RenderSteppedConnection <span class="ty">: RBXScriptConnection</span>,
+<span class="kw">export</span> <span class="kw">type</span> <span class="ty">PublicType</span> = Types.IParallaxController
+<span class="kw">type</span> <span class="ty">PrivateType</span> = <span class="ty">PublicType</span> &amp; typeof(ParallaxController) &amp; {
+	LayersFolder	: <span class="ty">Folder</span>,
+	Layers 			: {
+		[<span class="ty">GuiBase</span>]: {
+			Position: <span class="ty">UDim2</span>,
+			Depth: <span class="ty">number</span>,
+			StartingPosition: <span class="ty">UDim2</span>,
+		}
+	},
+	
+	<span class="cm">-- // Other</span>
+	StartingPosition	: <span class="ty">UDim2</span>,
+	
+	<span class="cm">-- // Connections</span>
+	RenderSteppedConnection 	: <span class="ty">RBXScriptConnection</span>,
 }
+
 <span class="cm">-----==== Constructor ====-----</span>
 
-<span class="kw">function</span> <span class="fn">ParallaxController.new</span>(Model<span class="ty">: Model</span>)
-  <span class="kw">local</span> self = setmetatable({} :: PrivateType, ParallaxController)
-
-  <span class="cm">--#################</span>
-  self.Portal = Model:WaitForChild(<span class="str">"Portal"</span>) :: BasePart
-  self.Gui = self.Portal:WaitForChild(<span class="str">'PortalGui'</span>) :: SurfaceGui
-  self.Canvas = self.Gui:WaitForChild(<span class="str">"Canvas"</span>) :: CanvasGroup
-  self.LayersFolder = self.Canvas:WaitForChild(<span class="str">"Layers"</span>) :: Folder
-  self.IsOpened = <span class="kw">false</span>
-
-  <span class="cm">--#################</span>
-  self:SetupLayers()
-
-  <span class="kw">return</span> self :: PublicType
+<span class="kw">function</span> ParallaxController.<span class="fn">new</span>(<span class="ty">Model</span>: <span class="ty">Model</span>)
+	<span class="kw">local</span> self = setmetatable({}, ParallaxController) :: <span class="ty">PrivateType</span>
+	
+	<span class="cm">--#################</span>
+	self.Portal = <span class="ty">Model</span>:<span class="ty">WaitForChild</span>(<span class="str">"Portal"</span>) :: <span class="ty">BasePart</span>
+	self.Gui = self.Portal:<span class="ty">WaitForChild</span>(<span class="str">'PortalGui'</span>) :: <span class="ty">SurfaceGui</span>
+	self.Canvas = self.Gui:<span class="ty">WaitForChild</span>(<span class="str">"Canvas"</span>) :: <span class="ty">CanvasGroup</span>
+	self.LayersFolder = self.Canvas:<span class="ty">WaitForChild</span>(<span class="str">"Layers"</span>) :: <span class="ty">Folder</span>
+	self.IsOpened = false
+	
+	<span class="cm">--#################</span>
+	self:<span class="ty">SetupLayers</span>()
+	
+	<span class="kw">return</span> self :: <span class="ty">PublicType</span>
 <span class="kw">end</span>
 
 <span class="cm">-----==== Private Methods ====-----</span>
 
-<span class="kw">function</span> <span class="fn">ParallaxController.SetupLayers</span>(self<span class="ty">: PrivateType</span>)
-  <span class="kw">local</span> DepthFrame = self.LayersFolder:WaitForChild(<span class="str">"Depth"</span>) :: Frame
-  self.StartingPosition = DepthFrame.Position
-  self.Canvas.GroupTransparency = <span class="num">1</span>
+<span class="kw">function</span> ParallaxController.<span class="fn">SetupLayers</span>(self: <span class="ty">PrivateType</span>)
+	<span class="kw">local</span> DepthFrame = self.LayersFolder:<span class="ty">WaitForChild</span>(<span class="str">"Depth"</span>) :: <span class="ty">Frame</span>
+	self.StartingPosition = DepthFrame.Position
+	self.Canvas.GroupTransparency = <span class="num">1</span>
+	
+	<span class="kw">local</span> LastZIndex = -<span class="num">1</span>
+	<span class="kw">for</span> i = <span class="num">1</span>, <span class="num">15</span> <span class="kw">do</span>
+		LastZIndex -= <span class="num">1</span>
+		<span class="kw">local</span> Depth = DepthFrame:<span class="ty">Clone</span>()
+		Depth.Name = CLONE_NAME
+		Depth.ZIndex = LastZIndex
+		Depth.Parent = self.LayersFolder
+	<span class="kw">end</span>
+	
+	<span class="kw">for</span> _, Layer <span class="kw">in</span> self.LayersFolder:<span class="ty">GetChildren</span>() <span class="kw">do</span>
+		<span class="kw">if</span> <span class="kw">not</span> Layer:<span class="ty">IsA</span>(<span class="str">"GuiBase"</span>) <span class="kw">then</span> <span class="kw">continue</span> <span class="kw">end</span>
 
-  <span class="kw">local</span> LastZIndex = <span class="num">-1</span>
-  <span class="kw">for</span> i = <span class="num">1</span>, <span class="num">15</span> <span class="kw">do</span>
-    LastZIndex -= <span class="num">1</span>
-    <span class="kw">local</span> Depth = DepthFrame:Clone()
-    Depth.ZIndex = LastZIndex
-    Depth.Parent = self.LayersFolder
-  <span class="kw">end</span>
-
-  <span class="kw">for</span> _, Layer <span class="kw">in</span> self.LayersFolder:GetChildren() <span class="kw">do</span>
-    <span class="kw">if not</span> Layer:IsA(<span class="str">"GuiBase"</span>) <span class="kw">then continue end</span>
-    <span class="kw">local</span> UIStroke = Layer:FindFirstChild(<span class="str">"UIStroke"</span>) :: UIStroke
-
-    <span class="kw">if</span> UIStroke <span class="kw">then</span>
-      UIStroke.Transparency = ((Layer.ZIndex * <span class="num">-1</span>) / <span class="num">16</span>)
-      <span class="kw">local</span> OffsetSize = math.abs(Layer.ZIndex) * <span class="num">0.03</span>
-      Layer.Size = UDim2.new(<span class="num">1</span> + OffsetSize, <span class="num">0</span>, <span class="num">1</span> - OffsetSize, <span class="num">0</span>)
-    <span class="kw">end</span>
-  <span class="kw">end</span>
-
-  self.Layers = self:GetLayers()
+		<span class="kw">local</span> <span class="ty">UIStroke</span> = Layer:<span class="ty">FindFirstChild</span>(<span class="str">"UIStroke"</span>) :: <span class="ty">UIStroke</span>
+		<span class="kw">if</span> <span class="ty">UIStroke</span> <span class="kw">then</span>
+			<span class="ty">UIStroke</span>.Transparency = ((Layer.ZIndex * -<span class="num">1</span>) / <span class="num">16</span>)
+			<span class="kw">local</span> OffsetSize = math.<span class="fn">abs</span>(Layer.ZIndex) * <span class="num">0.03</span>
+			Layer.Size = <span class="ty">UDim2</span>.<span class="fn">new</span>(<span class="num">1</span> + OffsetSize, <span class="num">0</span>, <span class="num">1</span> - OffsetSize, <span class="num">0</span>)
+		<span class="kw">end</span>
+	<span class="kw">end</span>
+	
+	self.Layers = self:<span class="ty">GetLayers</span>()
 <span class="kw">end</span>
 
-<span class="kw">function</span> <span class="fn">ParallaxController.GetLayers</span>(self<span class="ty">: PrivateType</span>)
-  <span class="kw">local</span> LayersTable = {}
-
-  <span class="kw">for</span> _, Layer <span class="kw">in</span> self.LayersFolder:GetChildren() <span class="kw">do</span>
-    <span class="kw">if not</span> Layer:IsA(<span class="str">"GuiBase"</span>) <span class="kw">then continue end</span>
-
-    LayersTable[Layer] = {
-      Position = Layer.Position,
-      StartingPosition = Layer.Position,
-      Depth = ((Layer.ZIndex * <span class="num">-1</span>) / <span class="num">10</span>) * <span class="num">1.5</span> <span class="cm">--1.5</span>
-    }
-  <span class="kw">end</span>
-
-  <span class="kw">return</span> LayersTable
+<span class="kw">function</span> ParallaxController.<span class="fn">GetLayers</span>(self: <span class="ty">PrivateType</span>)
+	<span class="kw">local</span> LayersTable = {}
+	
+	<span class="kw">for</span> _, Layer <span class="kw">in</span> self.LayersFolder:<span class="ty">GetChildren</span>() <span class="kw">do</span>
+		<span class="kw">if</span> <span class="kw">not</span> Layer:<span class="ty">IsA</span>(<span class="str">"GuiBase"</span>) <span class="kw">then</span> <span class="kw">continue</span> <span class="kw">end</span>
+		
+		LayersTable[Layer] = {
+			Position = Layer.Position,
+			StartingPosition = Layer.Position,
+			Depth = ((Layer.ZIndex * -<span class="num">1</span>) / <span class="num">10</span>) * <span class="num">1.5</span> <span class="cm">--1.5</span>
+		}
+	<span class="kw">end</span>
+	
+	<span class="kw">return</span> LayersTable
 <span class="kw">end</span>
 
-<span class="kw">function</span> <span class="fn">ParallaxController.Runtime</span>(self<span class="ty">: PrivateType</span>)
-  self.RenderSteppedConnection = RunService.RenderStepped:Connect(<span class="kw">function</span>()
-    <span class="kw">local</span> PortalRatio = self.Portal.Size.Y / self.Portal.Size.X
-    <span class="kw">local</span> CameraDirection = (self.Portal.Position - Camera.CFrame.Position).Unit
-    <span class="kw">local</span> PortalDirection = self.Portal.CFrame:VectorToObjectSpace(CameraDirection)
-    <span class="kw">local</span> CorrectedDirection = Vector3.new(PortalDirection.X, PortalDirection.Y / PortalRatio, <span class="num">0</span>)
+<span class="kw">function</span> ParallaxController.<span class="fn">Runtime</span>(self: <span class="ty">PrivateType</span>)
+	self.RenderSteppedConnection = RunService.RenderStepped:<span class="ty">Connect</span>(<span class="kw">function</span>()
+		<span class="kw">local</span> PortalRatio = self.Portal.Size.Y / self.Portal.Size.X
+		<span class="kw">local</span> CameraDirection = (self.Portal.Position - Camera.CFrame.Position).Unit
+		<span class="kw">local</span> PortalDirection = self.Portal.CFrame:<span class="ty">VectorToObjectSpace</span>(CameraDirection)
 
-    <span class="kw">for</span> Layer<span class="ty">: ImageLabel</span>, Info <span class="kw">in</span> self.Layers <span class="kw">do</span>
-      <span class="kw">local</span> XDepth = CorrectedDirection.X * Info.Depth * <span class="num">1.25</span>
-      <span class="kw">local</span> YDepth = CorrectedDirection.Y * Info.Depth <span class="cm">--/ 4</span>
-      <span class="kw">local</span> offset = UDim2.fromScale(XDepth, YDepth)
+		<span class="kw">local</span> CorrectedDirection = <span class="ty">Vector3</span>.<span class="fn">new</span>(PortalDirection.X, PortalDirection.Y / PortalRatio, <span class="num">0</span>)
+		<span class="kw">for</span> Layer: <span class="ty">ImageLabel</span>, Info <span class="kw">in</span> self.Layers <span class="kw">do</span>
+			<span class="kw">local</span> XDepth = CorrectedDirection.X * Info.Depth * <span class="num">1.25</span>
+			<span class="kw">local</span> YDepth = CorrectedDirection.Y * Info.Depth <span class="cm">--/ 4</span>
 
-      Layer.Position = Layer.Position:Lerp(Info.Position + offset, <span class="num">0.05</span>)
-    <span class="kw">end</span>
-  <span class="kw">end</span>)
+			<span class="kw">local</span> offset = <span class="ty">UDim2</span>.<span class="fn">fromScale</span>(XDepth, YDepth)
+			
+			Layer.Position = Layer.Position:<span class="ty">Lerp</span>(Info.Position + offset, <span class="num">0.05</span>) 
+		<span class="kw">end</span>
+	<span class="kw">end</span>)
 <span class="kw">end</span>
 
 <span class="cm">-----==== Public Methods ====-----</span>
 
-<span class="kw">function</span> <span class="fn">ParallaxController.Open</span>(self<span class="ty">: PrivateType</span>)
-  TweenService:Create(
-    self.Canvas,
-    DEFAULT_TWEENINFO,
-    {GroupTransparency = <span class="num">0</span>}
-  ):Play()
-
-  self:Runtime()
-  self.IsOpened = <span class="kw">true</span>
+<span class="kw">function</span> ParallaxController.<span class="fn">Open</span>(self: <span class="ty">PrivateType</span>)
+	TweenService:<span class="ty">Create</span>(
+		self.Canvas,
+		DEFAULT_TWEENINFO,
+		{GroupTransparency = <span class="num">0</span>}
+	):<span class="ty">Play</span>()
+	
+	self:<span class="ty">Runtime</span>()
+	self.IsOpened = true
 <span class="kw">end</span>
 
-<span class="kw">function</span> <span class="fn">ParallaxController.Close</span>(self<span class="ty">: PrivateType</span>)
-  TweenService:Create(
-    self.Canvas,
-    DEFAULT_TWEENINFO,
-    {GroupTransparency = <span class="num">1</span>}
-  ):Play()
-
-  self.RenderSteppedConnection:Disconnect()
-  self.IsOpened = <span class="kw">false</span>
+<span class="kw">function</span> ParallaxController.<span class="fn">Close</span>(self: <span class="ty">PrivateType</span>)
+	TweenService:<span class="ty">Create</span>(
+		self.Canvas,
+		DEFAULT_TWEENINFO,
+		{GroupTransparency = <span class="num">1</span>}
+	):<span class="ty">Play</span>()
+	
+	self.RenderSteppedConnection:<span class="ty">Disconnect</span>()
+	self.IsOpened = false
 <span class="kw">end</span>
 
-<span class="kw">function</span> <span class="fn">ParallaxController.Destroy</span>(self<span class="ty">: PrivateType</span>)
-  <span class="kw">if</span> self.RenderSteppedConnection <span class="kw">and</span> self.RenderSteppedConnection.Connected <span class="kw">then</span>
-    self.RenderSteppedConnection:Disconnect()
-  <span class="kw">end</span>
 
-  setmetatable(self, <span class="kw">nil</span>)
-  table.clear(self)
+<span class="kw">function</span> ParallaxController.<span class="fn">Destroy</span>(self: <span class="ty">PrivateType</span>)
+	<span class="kw">if</span> self.RenderSteppedConnection <span class="kw">and</span> self.RenderSteppedConnection.Connected <span class="kw">then</span>
+		self.RenderSteppedConnection:<span class="ty">Disconnect</span>()
+	<span class="kw">end</span>
+
+	<span class="cm">-- Destroy Depth UI Clones</span>
+	<span class="kw">for</span> _, Depth <span class="kw">in</span> self.LayersFolder:<span class="ty">GetChildren</span>() <span class="kw">do</span>
+		<span class="kw">if</span> Depth.Name == CLONE_NAME <span class="kw">then</span>
+			Depth:<span class="ty">Destroy</span>()
+		<span class="kw">end</span>
+	<span class="kw">end</span>
+	
+	setmetatable(self, nil)
+	table.<span class="fn">clear</span>(self)
 <span class="kw">end</span>
+
 <span class="kw">return</span> ParallaxController</pre></div>
     </div>
 
