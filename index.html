@@ -701,7 +701,7 @@ Tile.__index = Tile
 <span class="cm">-- Updates existing ones and despawns tiles past DisappearDistance</span>
 <span class="kw">function</span> TileController.<span class="fn">_Update</span>(self: <span class="ty">PrivateType</span>, Delta: <span class="ty">number</span>, HumanoidRootPart: <span class="ty">BasePart</span>)
     self.ElapsedTime += Delta
-    <span class="kw">if</span> (self.ElapsedTime :: <span class="ty">number</span>) &lt; self.UpdateInterval <span class="kw">then</span> <span class="kw">return</span> <span class="kw">end</span> <span class="cm">-- throttle</span>
+    <span class="kw">if</span> self.ElapsedTime &lt; self.UpdateInterval <span class="kw">then</span> <span class="kw">return</span> <span class="kw">end</span> <span class="cm">-- throttle</span>
 
     self.ElapsedTime -= self.UpdateInterval
     self.TimeOffset += self.UpdateInterval * <span class="num">2</span> <span class="cm">-- advances wave independent of framerate</span>
