@@ -5,36 +5,38 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ParticleWaste Portfoilo <3</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#faf9f7;
+    --bg:#faf8f4;
     --surface:#ffffff;
-    --line:#e5e3de;
-    --text:#1c1c1e;
-    --muted:#6b6b70;
-    --accent:#2952c8;
-    --accent-soft:#eef1fb;
-    --code-bg:#1e1f24;
-    --code-head:#2c2d34;
+    --line:#e4dfd4;
+    --text:#211f2b;
+    --muted:#726e7c;
+    --accent:#4c3df0;
+    --accent2:#ffcc3d;
+    --accent-soft:#ece9fd;
+    --code-bg:#211f2b;
+    --code-head:#2c2939;
   }
   html[data-theme="dark"]{
-    --bg:#141416;
-    --surface:#1c1c1f;
-    --line:#2c2c30;
-    --text:#eceae4;
-    --muted:#9a9aa0;
-    --accent:#6f92ff;
-    --accent-soft:#20263d;
-    --code-bg:#0f1013;
-    --code-head:#1c1d21;
+    --bg:#17151f;
+    --surface:#1f1c28;
+    --line:#332e40;
+    --text:#efece8;
+    --muted:#9791a3;
+    --accent:#8b7bff;
+    --accent2:#ffcc3d;
+    --accent-soft:#2a2540;
+    --code-bg:#0f0d15;
+    --code-head:#1c1926;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
   html{scroll-behavior:smooth;}
   body{
     background:var(--bg);
     color:var(--text);
-    font-family:'Inter',sans-serif;
+    font-family:'Space Grotesk',sans-serif;
     line-height:1.65;
     font-size:16px;
     transition:background .15s, color .15s;
@@ -52,55 +54,64 @@
     gap:12px; flex-wrap:wrap;
   }
   .brand{
-    font-family:'Sora',sans-serif;
-    font-weight:600;
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:700;
     font-size:16px;
   }
   .theme-switch{
-    display:flex; border:1px solid var(--line); border-radius:6px; overflow:hidden;
+    display:flex; border:1px solid var(--line); border-radius:20px; overflow:hidden;
   }
   .theme-switch button{
-    font-family:'Inter',sans-serif;
-    font-size:13px;
-    font-weight:500;
-    padding:6px 12px;
+    font-family:'Space Grotesk',sans-serif;
+    font-size:12.5px;
+    font-weight:600;
+    padding:7px 14px;
     background:none;
     border:none;
     color:var(--muted);
     cursor:pointer;
   }
-  .theme-switch button.active{background:var(--accent); color:#fff;}
+  .theme-switch button.active{background:var(--accent); color:#fff; border-radius:20px;}
 
-  .hero{padding:56px 0 40px;}
+  .hero{padding:56px 0 44px; position:relative;}
   .eyebrow{
-    font-size:13px; color:var(--accent); font-weight:600; letter-spacing:.02em;
-    margin-bottom:12px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px; color:var(--accent); font-weight:600; letter-spacing:.02em;
+    margin-bottom:16px;
+    display:inline-block;
+    background:var(--accent-soft);
+    padding:5px 11px;
+    border-radius:20px;
+    transform:rotate(-1.5deg);
   }
   h1{
-    font-family:'Sora',sans-serif;
-    font-size:32px;
+    font-family:'Space Grotesk',sans-serif;
+    font-size:33px;
     font-weight:700;
-    margin-bottom:14px;
-    line-height:1.25;
+    margin-bottom:16px;
+    line-height:1.28;
+    letter-spacing:-.01em;
   }
   .lead{color:var(--muted); font-size:16px; max-width:600px;}
   .hero-meta{
-    margin-top:22px; display:flex; gap:28px; flex-wrap:wrap;
+    margin-top:24px; display:flex; gap:14px; flex-wrap:wrap;
   }
-  .hero-meta div{font-size:14px;}
-  .hero-meta .num{font-family:'Sora',sans-serif; font-weight:700; font-size:20px; color:var(--text); display:block;}
-  .hero-meta .label{color:var(--muted);}
+  .hero-meta div{font-size:14px; background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:10px 16px;}
+  .hero-meta div:nth-child(2){transform:rotate(.8deg);}
+  .hero-meta div:nth-child(1){transform:rotate(-.8deg);}
+  .hero-meta .num{font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:19px; color:var(--accent); display:block;}
+  .hero-meta .label{color:var(--muted); font-size:11.5px; text-transform:uppercase; letter-spacing:.03em;}
   .hero-links{margin-top:26px; display:flex; gap:10px; flex-wrap:wrap;}
   .btn{
-    font-size:14px; font-weight:500;
+    font-size:14px; font-weight:600;
     text-decoration:none;
-    padding:10px 18px;
+    padding:11px 20px;
     border:1px solid var(--line);
-    border-radius:6px;
+    border-radius:20px;
     color:var(--text);
-    transition:border-color .15s, background .15s;
+    transition:transform .15s, border-color .15s;
   }
-  .btn:hover{border-color:var(--accent);}
+  .btn:hover{border-color:var(--accent); transform:translateY(-2px);}
   .btn.primary{background:var(--accent); color:#fff; border-color:var(--accent);}
   .btn.primary:hover{opacity:.9;}
 
@@ -109,31 +120,36 @@
     font-size:13px;
     color:var(--muted);
     background:var(--accent-soft);
-    border-radius:6px;
-    padding:12px 14px;
+    border-radius:12px;
+    padding:12px 16px;
     max-width:600px;
+    position:relative;
   }
 
-  section{padding:48px 0; border-top:1px solid var(--line);}
+  section{padding:48px 0; border-top:1px dashed var(--line); position:relative;}
   .section-label{
-    font-size:13px; color:var(--accent); font-weight:600; margin-bottom:6px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:11.5px; color:#fff; font-weight:600; margin-bottom:14px;
+    background:var(--accent2); color:#3a2c00;
+    display:inline-block; padding:3px 10px; border-radius:4px;
+    transform:rotate(-2deg);
   }
   h2{
-    font-family:'Sora',sans-serif;
-    font-size:22px;
-    font-weight:600;
+    font-family:'Space Grotesk',sans-serif;
+    font-size:23px;
+    font-weight:700;
     margin-bottom:24px;
   }
 
-  .stack-list{display:flex; flex-direction:column; gap:16px;}
+  .stack-list{display:flex; flex-direction:column; gap:14px;}
   .stack-row{
     display:grid; grid-template-columns:160px 1fr; gap:16px; align-items:start;
-    padding-bottom:16px; border-bottom:1px solid var(--line);
+    padding-bottom:14px; border-bottom:1px solid var(--line);
   }
   .stack-row:last-child{border-bottom:none; padding-bottom:0;}
-  .stack-row .k{font-weight:600; font-size:14px;}
+  .stack-row .k{font-weight:700; font-size:14px; color:var(--accent);}
   .stack-row .v{color:var(--muted); font-size:14px;}
-  .stack-row .v b{color:var(--text); font-weight:500;}
+  .stack-row .v b{color:var(--text); font-weight:600;}
 
   .two-col{
     display:grid; grid-template-columns:1fr 1fr; gap:20px;
@@ -141,25 +157,28 @@
   .col-card{
     background:var(--surface);
     border:1px solid var(--line);
-    border-radius:10px;
-    padding:20px 22px;
+    border-radius:14px;
+    padding:22px 24px;
+    transform:rotate(-.4deg);
   }
-  .col-card h3{font-family:'Sora',sans-serif; font-size:15px; font-weight:600; margin-bottom:12px;}
+  .two-col .col-card:last-child{transform:rotate(.4deg);}
+  .col-card h3{font-family:'Space Grotesk',sans-serif; font-size:15px; font-weight:700; margin-bottom:14px;}
   .col-card ul{list-style:none; display:flex; flex-direction:column; gap:10px;}
-  .col-card li{font-size:14px; color:var(--muted); padding-left:18px; position:relative;}
-  .col-card.do li::before{content:"+"; position:absolute; left:0; color:var(--accent); font-weight:600;}
-  .col-card:not(.do) li::before{content:"x"; position:absolute; left:0; color:var(--muted); font-weight:600;}
+  .col-card li{font-size:14px; color:var(--muted); padding-left:20px; position:relative;}
+  .col-card.do li::before{content:"✓"; position:absolute; left:0; color:var(--accent); font-weight:700;}
+  .col-card.do li.minus::before{content:"×"; color:var(--muted);}
+  .col-card:not(.do) li::before{content:"×"; position:absolute; left:0; color:var(--muted); font-weight:700;}
   .col-card.do h3{color:var(--accent);}
 
   .rates{
     background:var(--surface);
     border:1px solid var(--line);
-    border-radius:10px;
+    border-radius:16px;
     padding:24px 26px;
   }
   .rate-row{
     display:flex; align-items:baseline; justify-content:space-between;
-    padding:12px 0;
+    padding:13px 0;
     border-bottom:1px solid var(--line);
     font-size:15px;
     flex-wrap:wrap;
@@ -167,57 +186,67 @@
   }
   .rate-row:last-child{border-bottom:none; padding-bottom:0;}
   .rate-row:first-child{padding-top:0;}
-  .rate-row .price{font-family:'Sora',sans-serif; font-weight:700; color:var(--accent);}
+  .rate-row .price{font-family:'Space Grotesk',sans-serif; font-weight:700; color:var(--accent);}
   .rate-note{
     margin-top:18px; font-size:13px; color:var(--muted);
-    background:var(--accent-soft); border-radius:6px; padding:12px 14px;
+    background:var(--accent-soft); border-radius:12px; padding:12px 16px;
   }
   .payment-methods{display:flex; gap:8px; flex-wrap:wrap; margin-top:14px;}
   .payment-methods span{
-    font-size:12px; font-weight:500; color:var(--text);
-    border:1px solid var(--line); border-radius:5px; padding:4px 10px;
+    font-size:12px; font-weight:600; color:var(--text);
+    border:1px solid var(--line); border-radius:20px; padding:5px 12px;
   }
 
   .services-list{display:flex; flex-direction:column; gap:12px;}
   .service-item{
-    background:var(--surface); border:1px solid var(--line); border-radius:8px;
-    padding:14px 18px;
+    background:var(--surface); border:1px solid var(--line); border-radius:12px;
+    padding:15px 20px;
   }
-  .service-item .t{font-weight:600; font-size:14px; margin-bottom:4px;}
+  .service-item .t{font-weight:700; font-size:14.5px; margin-bottom:4px;}
   .service-item .badge{
-    display:inline-block; font-size:11px; font-weight:600; color:var(--accent);
-    background:var(--accent-soft); border-radius:4px; padding:2px 7px; margin-left:8px;
+    display:inline-block; font-size:11px; font-weight:700; color:#3a2c00;
+    background:var(--accent2); border-radius:20px; padding:2px 9px; margin-left:8px;
     vertical-align:middle;
   }
-  .service-item .d{font-size:13px; color:var(--muted);}
+  .service-item .d{font-size:13.5px; color:var(--muted);}
 
   .tools-row{display:flex; gap:10px; flex-wrap:wrap;}
   .tools-row span{
-    font-size:13px; font-weight:500; color:var(--text);
-    border:1px solid var(--line); border-radius:6px; padding:8px 14px;
+    font-size:13px; font-weight:600; color:var(--text);
+    border:1px solid var(--line); border-radius:20px; padding:8px 15px;
     background:var(--surface);
   }
 
   .guarantee-box{
     background:var(--accent-soft);
-    border-radius:10px;
-    padding:20px 22px;
-    font-size:14px;
+    border-radius:16px;
+    padding:22px 24px;
+    font-size:14.5px;
     color:var(--text);
+    position:relative;
   }
+  .guarantee-box::before{
+    content:"★";
+    position:absolute; top:-10px; left:20px;
+    background:var(--accent2); color:#3a2c00;
+    width:28px; height:28px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-size:14px; box-shadow:0 2px 6px rgba(0,0,0,.15);
+  }
+  .guarantee-box{padding-top:26px;}
   .guarantee-box b{color:var(--accent);}
 
   .code-block{
     background:var(--code-bg);
-    border-radius:8px;
+    border-radius:14px;
     overflow:hidden;
     margin-bottom:20px;
   }
   .code-head{
-    padding:10px 16px;
+    padding:11px 18px;
     font-family:'JetBrains Mono',monospace;
     font-size:12px;
-    color:#9a9ca8;
+    color:#a79fc7;
     border-bottom:1px solid var(--code-head);
   }
   .code-scroll{
@@ -230,30 +259,30 @@
     font-family:'JetBrains Mono',monospace;
     font-size:12.5px;
     line-height:1.6;
-    color:#d7d8dd;
+    color:#dcd9e6;
     white-space:pre;
     tab-size:2;
     -moz-tab-size:2;
   }
-  .code-block .kw{color:#7fa6ff;}
-  .code-block .str{color:#9bd68d;}
-  .code-block .num{color:#e0a45c;}
-  .code-block .cm{color:#6d6f7a; font-style:italic;}
-  .code-block .fn{color:#e08fb0;}
-  .code-block .ty{color:#c9a6f0;}
+  .code-block .kw{color:#8b7bff;}
+  .code-block .str{color:#8fd68a;}
+  .code-block .num{color:#ffcc3d;}
+  .code-block .cm{color:#726a8c; font-style:italic;}
+  .code-block .fn{color:#ff9ec4;}
+  .code-block .ty{color:#7fd4d0;}
 
   .project{
     background:var(--surface);
     border:1px solid var(--line);
-    border-radius:10px;
+    border-radius:16px;
     padding:22px 24px;
     margin-bottom:16px;
   }
-  .project h3{font-family:'Sora',sans-serif; font-size:16px; font-weight:600; margin-bottom:8px;}
+  .project h3{font-family:'Space Grotesk',sans-serif; font-size:16px; font-weight:700; margin-bottom:8px;}
   .project p{color:var(--muted); font-size:14px; margin-bottom:14px;}
   .video-embed{
     position:relative; width:100%; padding-top:56.25%;
-    background:var(--bg); border-radius:6px; overflow:hidden;
+    background:var(--bg); border-radius:10px; overflow:hidden;
     border:1px solid var(--line);
   }
   .video-embed iframe{
@@ -263,6 +292,8 @@
     position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
     color:var(--muted); font-size:13px; flex-direction:column; gap:8px;
   }
+  .video-link{color:var(--accent); font-size:13.5px; font-weight:600; display:inline-block; margin-top:12px; text-decoration:none;}
+  .video-link:hover{text-decoration:underline;}
 
   .contact-grid{
     display:grid; grid-template-columns:repeat(auto-fit, minmax(200px,1fr)); gap:12px;
@@ -271,24 +302,25 @@
     display:block;
     background:var(--surface);
     border:1px solid var(--line);
-    border-radius:8px;
-    padding:16px 18px;
+    border-radius:12px;
+    padding:16px 20px;
     text-decoration:none;
     color:var(--text);
-    transition:border-color .15s;
+    transition:transform .15s, border-color .15s;
   }
-  .contact-item:hover{border-color:var(--accent);}
-  .contact-item .k{font-size:12px; color:var(--muted); display:block; margin-bottom:4px;}
-  .contact-item .v{font-size:15px; font-weight:500;}
+  .contact-item:hover{border-color:var(--accent); transform:translateY(-2px);}
+  .contact-item .k{font-size:11.5px; color:var(--muted); display:block; margin-bottom:4px; text-transform:uppercase; letter-spacing:.03em;}
+  .contact-item .v{font-size:15px; font-weight:700;}
 
   footer{
     padding:28px 0 48px; text-align:center; color:var(--muted); font-size:13px;
   }
 
   @media(max-width:600px){
-    h1{font-size:26px;}
+    h1{font-size:25px;}
     .stack-row{grid-template-columns:1fr;}
     .two-col{grid-template-columns:1fr;}
+    .col-card{transform:none !important;}
   }
 </style>
 </head>
@@ -314,7 +346,6 @@
     <p class="lead">I build gameplay systems for Roblox: economy, movement, inventory, and any other system the project needs. Started with plain Luau, now mostly work in Roblox-TS, but write Luau on request as well.</p>
 
     <div class="hero-meta">
-      <div><span class="num">5+</span><span class="label">years of experience</span></div>
       <div><span class="num">$15</span><span class="label">Minimal order</span></div>
       <div><span class="num">GMT+3</span><span class="label">Moscow timezone</span></div>
     </div>
@@ -323,21 +354,40 @@
       <span class="btn primary" style="user-select:text; cursor:text;">Discord: ParticleWaste</span>
       <a class="btn" href="https://github.com/MidaxProductions" target="_blank" rel="noopener">GitHub</a>
     </div>
+  </section>
 
-    <div class="note-box">English isn't my first language, so I'm not the strongest fit for calls that require me to lead the conversation - though I'm happy to join, listen, and respond as best I can. In exchange, my rates sit below market: they're enough for a comfortable living where I'm based, and I price honestly around that.</div>
+  <section id="why-me">
+    <div class="section-label">01</div>
+    <h2>Why work with me</h2>
+
+    <div class="col-card do">
+      <ul>
+        <li>Fast code delivery - almost always online and quick to respond</li>
+        <li>Your code stays private - I don't reuse it for other clients</li>
+        <li>5+ years of hands-on experience building gameplay systems for Roblox</li>
+        <li>Guarantee on delivered code</li>
+        <li>Rates below market, priced honestly - not a race to the bottom</li>
+        <li class="minus">Not a native English speaker - written communication is solid, live calls are where I'm weaker</li>
+      </ul>
+    </div>
   </section>
 
   <section id="focus">
-    <div class="section-label">01</div>
+    <div class="section-label">02</div>
     <h2>What I work on</h2>
 
     <div class="two-col">
       <div class="col-card do">
         <h3>I write</h3>
         <ul>
-          <li>Complex systems</li>
-          <li>Network optimization</li>
-          <li>Any system the project needs</li>
+          <li>Economy and monetization - shops, gamepasses, currency sinks, daily rewards</li>
+          <li>Data persistence - ProfileService/DataStore2, session-locking, anti-dupe</li>
+          <li>Inventory systems</li>
+          <li>Procedural generation</li>
+          <li>Quest and progression systems</li>
+          <li>Matchmaking and round-based game flow</li>
+          <li>Networking - replication, remote batching</li>
+          <li>Any other system the project needs</li>
         </ul>
       </div>
       <div class="col-card">
@@ -351,10 +401,11 @@
     </div>
 
     <p class="lead" style="margin-top:20px;">Main focus ranges from horrors to cash-grab games, with an emphasis on dopamine-driven gameplay loops.</p>
+
   </section>
 
   <section id="stack">
-    <div class="section-label">02</div>
+    <div class="section-label">03</div>
     <h2>Stack</h2>
 
     <div class="stack-list">
@@ -363,12 +414,20 @@
         <div class="v"><b>Luau</b>, <b>Roblox-TS</b></div>
       </div>
       <div class="stack-row">
-        <div class="k">Data storage</div>
-        <div class="v"><b>ProfileService</b>, <b>DataStore2</b></div>
+        <div class="k">Networking</div>
+        <div class="v"><b>RemoteEvent/RemoteFunction batching</b>, custom replication, rate-limiting</div>
       </div>
       <div class="stack-row">
-        <div class="k">Frameworks</div>
-        <div class="v"> <b>JECS, Matter, Rojo. </b> Comfortable with any framework - custom-built or open-source.</div>
+        <div class="k">State / ECS</div>
+        <div class="v"><b>JECS</b>, <b>Matter</b>, custom OOP architectures</div>
+      </div>
+      <div class="stack-row">
+        <div class="k">UI</div>
+        <div class="v"><b>React TSX</b>, <b>Fusion</b>, <b>Roact</b>, plain UI without a framework</div>
+      </div>
+      <div class="stack-row">
+        <div class="k">Data storage</div>
+        <div class="v"><b>ProfileService</b>, <b>DataStore2</b></div>
       </div>
       <div class="stack-row">
         <div class="k">Principles</div>
@@ -386,7 +445,7 @@
   </section>
 
   <section id="services">
-    <div class="section-label">03</div>
+    <div class="section-label">04</div>
     <h2>Services</h2>
 
     <div class="services-list">
@@ -395,18 +454,26 @@
         <div class="d">Cover a project end to end - server logic, client side, and UI.</div>
       </div>
       <div class="service-item">
+        <div class="t"><span style="background:var(--accent-soft); color:var(--accent); padding:2px 8px; border-radius:4px;">AI-written code cleanup</span></div>
+        <div class="d">Wrote something with ChatGPT/Claude and it's falling apart? No need to hide it - send it over. I'll keep what works, fix what's broken, and rebuild the parts that don't hold up.</div>
+      </div>
+      <div class="service-item">
+        <div class="t">Code review & security audit</div>
+        <div class="d">I go through your codebase and check how solid it is - readability, structure, and how well it holds up against cheaters and exploiters. You get a clear list of what's weak and what to fix, plus I'm happy to just consult and answer questions along the way.</div>
+      </div>
+      <div class="service-item">
         <div class="t">Lead developer & Game Designer</div>
         <div class="d">Architecture planning, task breakdown for a team, code review.</div>
       </div>
       <div class="service-item">
-        <div class="t">Full project revival <span class="badge">turnkey</span></div>
+        <div class="t">Full project revival</div>
         <div class="d">I take an existing project and hand it back fully working, end to end - not a from-scratch rewrite.</div>
       </div>
     </div>
   </section>
 
   <section id="rates">
-    <div class="section-label">04</div>
+    <div class="section-label">05</div>
     <h2>Rates</h2>
 
     <div class="rates">
@@ -419,7 +486,7 @@
         <span class="price">from $5</span>
       </div>
       <div class="rate-row">
-        <span>Deposit</span>
+        <span>Payment deposit</span>
         <span class="price">25%</span>
       </div>
       <div class="rate-row">
@@ -432,11 +499,11 @@
       <span>PayPal</span><span>MasterCard</span><span>Crypto</span><span>SBP</span><span>Robux (+30% Roblox commission)</span>
     </div>
 
-    <p class="rate-note">I always share a time estimate before starting work. Payment is a 25% deposit upfront, the rest on delivery.</p>
+    <p class="rate-note">Payment is a 25% deposit upfront, the rest right before delivery.</p>
   </section>
 
   <section id="guarantee">
-    <div class="section-label">05</div>
+    <div class="section-label">06</div>
     <h2>Guarantee</h2>
 
     <div class="guarantee-box">
@@ -445,7 +512,7 @@
   </section>
 
   <section id="code">
-    <div class="section-label">06</div>
+    <div class="section-label">07</div>
     <h2>Code samples</h2>
 
     <p class="rate-note" style="margin-bottom:16px;"><b>My code style is part of my signature.</b> For larger projects and ongoing collaborations, I can follow your existing coding standards and conventions. For smaller one-off tasks, I usually work in my own style: structured, readable, and consistent. OOP is my priority. I do use ECS as well, but only where it's actually needed. I don't follow the crazy trend among developers of using ECS just anywhere.</p>
@@ -992,7 +1059,7 @@ Tile.__index = Tile
   </section>
 
   <section id="projects">
-    <div class="section-label">07</div>
+    <div class="section-label">08</div>
     <h2>Random Project</h2>
 
     <div class="project">
@@ -1014,7 +1081,7 @@ Tile.__index = Tile
   </section>
 
   <section id="contact">
-    <div class="section-label">08</div>
+    <div class="section-label">09</div>
     <h2>Contact</h2>
 
     <div class="contact-grid">
