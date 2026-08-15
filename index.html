@@ -536,7 +536,8 @@ TileController.__index = TileController
 <span class="cm">-- [[ Services ]]</span>
 
 <span class="kw">const</span> RunService = game:<span class="ty">GetService</span>(<span class="str">"RunService"</span>)
-<span class="kw">const</span> LocalPlayer = game:<span class="ty">GetService</span>(<span class="str">"Players"</span>).LocalPlayer
+<span class="kw">const</span> Players = game:<span class="ty">GetService</span>(<span class="str">"Players"</span>)
+<span class="kw">const</span> LocalPlayer = Players.LocalPlayer :: <span class="ty">Player</span>
 
 <span class="cm">-- [[ Assets ]]</span>
 
@@ -590,15 +591,15 @@ GlassSFX.Parent = script
     _PlaySFX        : (self: <span class="ty">ITile_Private</span>) -&gt; (),
 }
 
-<span class="kw">export</span> <span class="kw">type</span> <span class="ty">PublicType</span> = {
+<span class="kw">export</span> <span class="kw">type</span> <span class="ty">ITileController_Public</span> = {
 
     <span class="cm">-- Functions</span>
-    GetSettings            : (self: <span class="ty">PublicType</span>) -&gt; {[string]: <span class="ty">number</span>},
-    SetSettings            : (self: <span class="ty">PublicType</span>, Params: {[string]: <span class="ty">number</span>}) -&gt; (),
-    ChangeColor            : (self: <span class="ty">PublicType</span>, Color: <span class="ty">Color3</span>) -&gt; (),
+    GetSettings            : (self: <span class="ty">ITileController_Public</span>) -&gt; {[string]: <span class="ty">number</span>},
+    SetSettings            : (self: <span class="ty">ITileController_Public</span>, Params: {[string]: <span class="ty">number</span>}) -&gt; (),
+    ChangeColor            : (self: <span class="ty">ITileController_Public</span>, Color: <span class="ty">Color3</span>) -&gt; (),
 }
 
-<span class="kw">type</span> <span class="ty">PrivateType</span> = <span class="ty">Params</span> &amp; <span class="ty">PublicType</span> &amp; {
+<span class="kw">type</span> <span class="ty">ITileController_Private</span> = <span class="ty">Params</span> &amp; <span class="ty">ITileController_Public</span> &amp; {
     TileMap             : {[string]: <span class="ty">ITile_Public</span>},
     TimeOffset            : <span class="ty">number</span>,
     ElapsedTime            : <span class="ty">number</span>,
@@ -606,8 +607,8 @@ GlassSFX.Parent = script
     RuntimeConnection     : <span class="ty">RBXScriptConnection</span>,
 
     <span class="cm">-- Functions</span>
-    _Update                : (self: <span class="ty">PrivateType</span>, Delta: <span class="ty">number</span>, HumanoidRootPart: <span class="ty">BasePart</span>) -&gt; (),
-    _Runtime            : (self: <span class="ty">PrivateType</span>) -&gt; ()
+    _Update                : (self: <span class="ty">ITileController_Private</span>, Delta: <span class="ty">number</span>, HumanoidRootPart: <span class="ty">BasePart</span>) -&gt; (),
+    _Runtime            : (self: <span class="ty">ITileController_Private</span>) -&gt; ()
 }
 
 <span class="cm">-----==== &lt; Tile &gt; ====-----</span>
@@ -619,7 +620,7 @@ Tile.__index = Tile
 
 <span class="cm">-- Builds one triangular tile: 3 vertices/3 edge lines and an invisible collision part that follows the vertex height</span>
 <span class="kw">function</span> Tile.<span class="fn">new</span>(Position: <span class="ty">Vector3</span>, TileSize: <span class="ty">number</span>, Parent: <span class="ty">Instance</span>): <span class="ty">ITile_Public</span>
-    <span class="kw">local</span> self = setmetatable({}, Tile) :: <span class="ty">ITile_Private</span>
+    <span class="kw">const</span> self = setmetatable({}, Tile) :: <span class="ty">ITile_Private</span>
 
     self.Position = Position
     self.Vertices = {
@@ -649,10 +650,10 @@ Tile.__index = Tile
 <span class="cm">-- Draws the triangle 3 edges as thin neon parts</span>
 <span class="kw">function</span> Tile.<span class="fn">_CreateLines</span>(self: <span class="ty">ITile_Private</span>, Parent: <span class="ty">Instance</span>)
     <span class="kw">for</span> i = <span class="num">1</span>, #self.Vertices <span class="kw">do</span>
-        <span class="kw">local</span> StartVertex = self.Vertices[i]
-        <span class="kw">local</span> EndVertex = self.Vertices[i % #self.Vertices + <span class="num">1</span>] <span class="cm">-- wraps last -- first</span>
+        <span class="kw">const</span> StartVertex = self.Vertices[i]
+        <span class="kw">const</span> EndVertex = self.Vertices[i % #self.Vertices + <span class="num">1</span>] <span class="cm">-- wraps last -- first</span>
 
-        <span class="kw">local</span> Line = <span class="ty">Instance</span>.<span class="fn">new</span>(<span class="str">"Part"</span>)
+        <span class="kw">const</span> Line = <span class="ty">Instance</span>.<span class="fn">new</span>(<span class="str">"Part"</span>)
         Line.Transparency = <span class="num">0.35</span>
         Line.CastShadow = <span class="kw">false</span>
         Line.Size = <span class="ty">Vector3</span>.<span class="fn">new</span>(<span class="num">0.1</span>, <span class="num">0.1</span>, (StartVertex - EndVertex).Magnitude)
@@ -667,23 +668,23 @@ Tile.__index = Tile
 
 <span class="cm">-- Keeps the collision part height in sync with the animated vertices</span>
 <span class="kw">function</span> Tile.<span class="fn">_UpdatePosition</span>(self: <span class="ty">ITile_Private</span>)
-    <span class="kw">local</span> AverageY = (self.Vertices[<span class="num">1</span>].Y + self.Vertices[<span class="num">2</span>].Y + self.Vertices[<span class="num">3</span>].Y) / <span class="num">3</span>
+    <span class="kw">const</span> AverageY = (self.Vertices[<span class="num">1</span>].Y + self.Vertices[<span class="num">2</span>].Y + self.Vertices[<span class="num">3</span>].Y) / <span class="num">3</span>
     self.Part.Position = <span class="ty">Vector3</span>.<span class="fn">new</span>(self.Position.X, AverageY, self.Position.Z)
 <span class="kw">end</span>
 
 <span class="cm">-- Orients each edge line after vertices move</span>
 <span class="kw">function</span> Tile.<span class="fn">_UpdateLines</span>(self: <span class="ty">ITile_Private</span>)
     <span class="kw">for</span> i = <span class="num">1</span>, #self.Vertices <span class="kw">do</span>
-        <span class="kw">local</span> StartVertex = self.Vertices[i]
-        <span class="kw">local</span> EndVertex = self.Vertices[i % #self.Vertices + <span class="num">1</span>]
-        <span class="kw">local</span> Line = self.Lines[i]
+        <span class="kw">const</span> StartVertex = self.Vertices[i]
+        <span class="kw">const</span> EndVertex = self.Vertices[i % #self.Vertices + <span class="num">1</span>]
+        <span class="kw">const</span> Line = self.Lines[i]
         Line.CFrame = <span class="ty">CFrame</span>.<span class="fn">new</span>((StartVertex + EndVertex) / <span class="num">2</span>, EndVertex)
     <span class="kw">end</span>
 <span class="kw">end</span>
 
 <span class="cm">-- Randomized SFX play</span>
 <span class="kw">function</span> Tile.<span class="fn">_PlaySFX</span>(self: <span class="ty">ITile_Private</span>)
-    <span class="kw">local</span> Sound = GlassSFX:<span class="ty">Clone</span>()
+    <span class="kw">const</span> Sound = GlassSFX:<span class="ty">Clone</span>()
     Sound.Parent = self.Part
 
     Sound.Ended:<span class="ty">Once</span>(<span class="kw">function</span>()
@@ -698,9 +699,9 @@ Tile.__index = Tile
 
 <span class="cm">-- Displaces each vertex Y using a directional sine wave</span>
 <span class="kw">function</span> Tile.<span class="fn">Update</span>(self: <span class="ty">ITile_Private</span>, TimeOffset: <span class="ty">number</span>, WaveHeight: <span class="ty">number</span>, WaveFrequency: <span class="ty">number</span>, waveDirection: <span class="ty">Vector3</span>)
-    <span class="kw">for</span> Index, Vertex <span class="kw">in</span> <span class="kw">ipairs</span>(self.Vertices) <span class="kw">do</span>
-        <span class="kw">local</span> DirectionOffset = (Vertex.X * waveDirection.X + Vertex.Z * waveDirection.Z)
-        <span class="kw">local</span> NewY = self.Position.Y + math.<span class="fn">sin</span>(DirectionOffset * WaveFrequency + TimeOffset) * WaveHeight
+    <span class="kw">for</span> Index, Vertex <span class="kw">in</span> self.Vertices <span class="kw">do</span>
+        <span class="kw">const</span> DirectionOffset = (Vertex.X * waveDirection.X + Vertex.Z * waveDirection.Z)
+        <span class="kw">const</span> NewY = self.Position.Y + math.<span class="fn">sin</span>(DirectionOffset * WaveFrequency + TimeOffset) * WaveHeight
 
         self.Vertices[Index] = <span class="ty">Vector3</span>.<span class="fn">new</span>(Vertex.X, NewY, Vertex.Z)
     <span class="kw">end</span>
@@ -713,7 +714,7 @@ Tile.__index = Tile
 <span class="kw">function</span> Tile.<span class="fn">Destroy</span>(self: <span class="ty">ITile_Private</span>)
     self.Part:<span class="ty">Destroy</span>()
 
-    <span class="kw">for</span> _, Line <span class="kw">in</span> <span class="kw">ipairs</span>(self.Lines) <span class="kw">do</span>
+    <span class="kw">for</span> _, Line <span class="kw">in</span> self.Lines <span class="kw">do</span>
         Line:<span class="ty">Destroy</span>()
     <span class="kw">end</span>
 
@@ -724,8 +725,8 @@ Tile.__index = Tile
 <span class="cm">-----==== &lt; Tile Controller &gt; ====-----</span>
 
 <span class="cm">-- Copies all Params fields into self</span>
-<span class="kw">function</span> TileController.<span class="fn">new</span>(Params: <span class="ty">Params</span>): <span class="ty">PublicType</span>
-    <span class="kw">local</span> self = setmetatable({}, TileController) :: <span class="ty">PrivateType</span>
+<span class="kw">function</span> TileController.<span class="fn">new</span>(Params: <span class="ty">Params</span>): <span class="ty">ITileController_Public</span>
+    <span class="kw">const</span> self = setmetatable({}, TileController) :: <span class="ty">ITileController_Private</span>
 
     <span class="cm">--################ Params</span>
     <span class="kw">for</span> Key, Value <span class="kw">in</span> Params :: {[string]: <span class="kw">any</span>} <span class="kw">do</span>
@@ -739,18 +740,18 @@ Tile.__index = Tile
 
     self:_Runtime()
 
-    <span class="kw">return</span> (self :: <span class="kw">any</span>):: <span class="ty">PublicType</span>
+    <span class="kw">return</span> self :: <span class="ty">ITileController_Public</span>
 <span class="kw">end</span>
 
 <span class="cm">-----==== Private Methods ====-----</span>
 
 <span class="cm">-- Heartbeat &lt;3</span>
-<span class="kw">function</span> TileController.<span class="fn">_Runtime</span>(self: <span class="ty">PrivateType</span>)
+<span class="kw">function</span> TileController.<span class="fn">_Runtime</span>(self: <span class="ty">ITileController_Private</span>)
     self.RuntimeConnection = RunService.Heartbeat:<span class="ty">Connect</span>(<span class="kw">function</span>(Delta: <span class="ty">number</span>)
-        <span class="kw">local</span> Character = LocalPlayer.Character
+        <span class="kw">const</span> Character = LocalPlayer.Character
         <span class="kw">if</span> <span class="kw">not</span> Character <span class="kw">then</span> <span class="kw">return</span> <span class="kw">end</span>
 
-        <span class="kw">local</span> HumanoidRootPart = Character:<span class="ty">FindFirstChild</span>(<span class="str">"HumanoidRootPart"</span>) :: <span class="ty">BasePart</span>
+        <span class="kw">const</span> HumanoidRootPart = Character:<span class="ty">FindFirstChild</span>(<span class="str">"HumanoidRootPart"</span>) :: <span class="ty">BasePart</span>
         <span class="kw">if</span> <span class="kw">not</span> HumanoidRootPart <span class="kw">then</span> <span class="kw">return</span> <span class="kw">end</span>
 
         self:_Update(Delta, HumanoidRootPart)
@@ -759,26 +760,26 @@ Tile.__index = Tile
 
 <span class="cm">-- Spawns tiles in AppearDistance</span>
 <span class="cm">-- Updates existing ones and despawns tiles past DisappearDistance</span>
-<span class="kw">function</span> TileController.<span class="fn">_Update</span>(self: <span class="ty">PrivateType</span>, Delta: <span class="ty">number</span>, HumanoidRootPart: <span class="ty">BasePart</span>)
+<span class="kw">function</span> TileController.<span class="fn">_Update</span>(self: <span class="ty">ITileController_Private</span>, Delta: <span class="ty">number</span>, HumanoidRootPart: <span class="ty">BasePart</span>)
     self.ElapsedTime += Delta
     <span class="kw">if</span> self.ElapsedTime &lt; self.UpdateInterval <span class="kw">then</span> <span class="kw">return</span> <span class="kw">end</span> <span class="cm">-- throttle</span>
 
     self.ElapsedTime -= self.UpdateInterval
     self.TimeOffset += self.UpdateInterval * <span class="num">2</span> <span class="cm">-- advances wave independent of framerate</span>
 
-    <span class="kw">local</span> TileSize = self.TileSize + self.TileSpacing
-    <span class="kw">local</span> Radius = math.<span class="fn">ceil</span>(self.AppearDistance / TileSize) <span class="cm">-- grid cell radius</span>
+    <span class="kw">const</span> TileSize = self.TileSize + self.TileSpacing
+    <span class="kw">const</span> Radius = math.<span class="fn">ceil</span>(self.AppearDistance / TileSize) <span class="cm">-- grid cell radius</span>
 
-    <span class="kw">local</span> PX, PZ = HumanoidRootPart.Position.X, HumanoidRootPart.Position.Z
-    <span class="kw">local</span> CenterX = math.<span class="fn">floor</span>(PX / TileSize) * TileSize <span class="cm">-- snap player position to grid</span>
-    <span class="kw">local</span> CenterZ = math.<span class="fn">floor</span>(PZ / TileSize) * TileSize
+    <span class="kw">const</span> PX, PZ = HumanoidRootPart.Position.X, HumanoidRootPart.Position.Z
+    <span class="kw">const</span> CenterX = math.<span class="fn">floor</span>(PX / TileSize) * TileSize <span class="cm">-- snap player position to grid</span>
+    <span class="kw">const</span> CenterZ = math.<span class="fn">floor</span>(PZ / TileSize) * TileSize
 
     <span class="kw">local</span> InRadiusMap = {}
 
     <span class="kw">for</span> DistanceX = -Radius, Radius <span class="kw">do</span>
         <span class="kw">for</span> DistanceZ = -Radius, Radius <span class="kw">do</span>
-            <span class="kw">local</span> x = CenterX + DistanceX * TileSize
-            <span class="kw">local</span> z = CenterZ + DistanceZ * TileSize
+            <span class="kw">const</span> x = CenterX + DistanceX * TileSize
+            <span class="kw">const</span> z = CenterZ + DistanceZ * TileSize
 
             <span class="cm">-- Out from boundaries</span>
             <span class="kw">if</span> x &lt; self.Boundaries.MinX <span class="kw">or</span> x &gt; self.Boundaries.MaxX <span class="kw">or</span>
@@ -787,14 +788,14 @@ Tile.__index = Tile
             <span class="kw">end</span>
 
             <span class="cm">-- Set tile status inRadius</span>
-            <span class="kw">local</span> Key = tostring(x) .. <span class="str">"_"</span> .. tostring(z) <span class="cm">-- 10_10 anythik</span>
+            <span class="kw">const</span> Key = tostring(x) .. <span class="str">"_"</span> .. tostring(z) <span class="cm">-- 10_10 anythik</span>
             InRadiusMap[Key] = <span class="kw">true</span>
 
             <span class="cm">-- Create tile</span>
             <span class="kw">if</span> <span class="kw">not</span> self.TileMap[Key] <span class="kw">then</span>
-                <span class="kw">local</span> Distance = (<span class="ty">Vector3</span>.<span class="fn">new</span>(x, self.SpawnPosition.Y, z) - HumanoidRootPart.Position).Magnitude
+                <span class="kw">const</span> Distance = (<span class="ty">Vector3</span>.<span class="fn">new</span>(x, self.SpawnPosition.Y, z) - HumanoidRootPart.Position).Magnitude
                 <span class="kw">if</span> Distance &lt;= self.AppearDistance <span class="kw">then</span> <span class="cm">-- Check distance</span>
-                    <span class="kw">local</span> TileInstance = Tile.<span class="fn">new</span>(
+                    <span class="kw">const</span> TileInstance = Tile.<span class="fn">new</span>(
                         <span class="ty">Vector3</span>.<span class="fn">new</span>(x, self.SpawnPosition.Y, z),
                         self.TileSize,
                         self.Parent
@@ -813,9 +814,9 @@ Tile.__index = Tile
     <span class="kw">end</span>
 
     <span class="cm">-- Destroy not inRadius tiles (Optimization)</span>
-    <span class="kw">for</span> Key, Tile <span class="kw">in</span> <span class="kw">pairs</span>(self.TileMap) <span class="kw">do</span>
+    <span class="kw">for</span> Key, Tile <span class="kw">in</span> self.TileMap <span class="kw">do</span>
         <span class="kw">if</span> <span class="kw">not</span> InRadiusMap[Key] <span class="kw">then</span>
-            <span class="kw">local</span> distance = (Tile.Position - HumanoidRootPart.Position).Magnitude
+            <span class="kw">const</span> distance = (Tile.Position - HumanoidRootPart.Position).Magnitude
             <span class="kw">if</span> distance &gt;= self.DisappearDistance <span class="kw">then</span>
                 Tile:<span class="ty">Destroy</span>()
                 self.TileMap[Key] = nil
@@ -827,7 +828,7 @@ Tile.__index = Tile
 <span class="cm">-----==== Public Methods ====-----</span>
 
 <span class="cm">-- Return current settings</span>
-<span class="kw">function</span> TileController.<span class="fn">GetSettings</span>(self: <span class="ty">PrivateType</span>) : {[string]: <span class="ty">number</span>}
+<span class="kw">function</span> TileController.<span class="fn">GetSettings</span>(self: <span class="ty">ITileController_Private</span>) : {[string]: <span class="ty">number</span>}
     <span class="kw">return</span> {
         UpdateInterval = self.UpdateInterval,
         WaveHeight = self.WaveHeight,
@@ -836,7 +837,7 @@ Tile.__index = Tile
 <span class="kw">end</span>
 
 <span class="cm">-- Real time overwrite</span>
-<span class="kw">function</span> TileController.<span class="fn">SetSettings</span>(self: <span class="ty">PrivateType</span>, Params: {[string]: <span class="ty">number</span>})
+<span class="kw">function</span> TileController.<span class="fn">SetSettings</span>(self: <span class="ty">ITileController_Private</span>, Params: {[string]: <span class="ty">number</span>})
     <span class="kw">for</span> Key, Value <span class="kw">in</span> Params <span class="kw">do</span>
         <span class="kw">if</span> <span class="kw">not</span> self[Key] <span class="kw">or</span> <span class="kw">not</span> Value <span class="kw">then</span> <span class="kw">continue</span> <span class="kw">end</span>
 
@@ -845,19 +846,19 @@ Tile.__index = Tile
 <span class="kw">end</span>
 
 <span class="cm">-- Recolor every edge line across all active tiles</span>
-<span class="kw">function</span> TileController.<span class="fn">ChangeColor</span>(self: <span class="ty">PrivateType</span>, Color: <span class="ty">Color3</span>)
-    <span class="kw">for</span> _, Tile <span class="kw">in</span> <span class="kw">pairs</span>(self.TileMap) <span class="kw">do</span>
-        <span class="kw">for</span> _, Part <span class="kw">in</span> <span class="kw">pairs</span>(Tile.Lines) <span class="kw">do</span>
+<span class="kw">function</span> TileController.<span class="fn">ChangeColor</span>(self: <span class="ty">ITileController_Private</span>, Color: <span class="ty">Color3</span>)
+    <span class="kw">for</span> _, Tile <span class="kw">in</span> self.TileMap <span class="kw">do</span>
+        <span class="kw">for</span> _, Part <span class="kw">in</span> Tile.Lines <span class="kw">do</span>
             Part.Color = Color
         <span class="kw">end</span>
     <span class="kw">end</span>
 <span class="kw">end</span>
 
 <span class="cm">-- Cleanup</span>
-<span class="kw">function</span> TileController.<span class="fn">Destroy</span>(self: <span class="ty">PrivateType</span>)
+<span class="kw">function</span> TileController.<span class="fn">Destroy</span>(self: <span class="ty">ITileController_Private</span>)
     self.RuntimeConnection:<span class="ty">Disconnect</span>()
 
-    <span class="kw">for</span> _, Tile <span class="kw">in</span> <span class="kw">pairs</span>(self.TileMap) <span class="kw">do</span>
+    <span class="kw">for</span> _, Tile <span class="kw">in</span> self.TileMap <span class="kw">do</span>
         Tile:<span class="ty">Destroy</span>()
     <span class="kw">end</span>
 
