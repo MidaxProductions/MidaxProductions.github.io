@@ -1,0 +1,276 @@
+  :root{
+    --bg:#0d1117;
+    --bg2:#11161f;
+    --grid-line:rgba(255,255,255,0.05);
+    --grid-frost:rgba(255,255,255,0.00);
+    --glass-border:rgba(255,255,255,0.09);
+    --text:#e8ecf1;
+    --muted:#a7afbc;
+    --accent:#ffb020;
+    --accent-glow:rgba(255,176,32,0.18);
+    --bad:#6b7280;
+    --good:#3ecf8e;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  /* html must not flash white on overscroll */
+  html{scroll-behavior:auto; background:var(--bg);}
+  /* no-JS fallback only: the fixed .bg-canvas paints over it; no background-attachment:fixed - scroll jank source */
+  body{
+    background:
+      radial-gradient(ellipse 900px 500px at 15% -10%, var(--accent-glow), transparent 60%),
+      linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%);
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+    line-height:1.6;
+    font-size:16px;
+    min-height:100vh;
+    transition:background .2s, color .2s;
+    position:relative;
+
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+  /* ambience canvas: first child of #root, gives the glass live pixels; overscans 48px so edge panels sample beyond the viewport */
+  .bg-canvas{
+    position:fixed; top:-48px; left:0; width:100%; height:calc(100% + 96px);
+    pointer-events:none; z-index:0;
+  }
+
+  .wrap{
+    max-width:760px;
+    margin:0 auto;
+    padding:0 24px;
+    padding-left: max(24px, env(safe-area-inset-left));
+    padding-right: max(24px, env(safe-area-inset-right));
+    position:relative;
+    z-index:1;
+  }
+
+  /* injected shader canvas + readable fallback without WebGL.
+     backdrop-filter here: on WebKit the shader is skipped entirely and this
+     native blur IS the glass; on Chromium it shows for a moment before init */
+  .glass{
+    position:relative;
+    color:var(--text);
+    background:rgba(255,255,255,.035);
+    border:1px solid var(--glass-border);
+    box-shadow:0 16px 48px -16px rgba(0,0,0,.42);
+    backdrop-filter:blur(14px) saturate(160%);
+    -webkit-backdrop-filter:blur(14px) saturate(160%);
+  }
+  .glass .d, .glass .label, .glass .k{ color:var(--muted); }
+
+  .glass > canvas{
+    border-radius:inherit;
+  }
+
+  /* portaled panels sit over their slots, after .glass so absolute wins over relative */
+  #root{position:relative;}
+  .lg-panel{position:absolute; z-index:2;}
+  .lg-slot{position:relative;}
+
+  /* strip the CSS fallback while the shader canvas is active, .liquid-glass is added only after successful init */
+  .liquid-glass{
+    background:none !important;
+    border:none !important;
+    box-shadow:none !important;
+    backdrop-filter:none !important;
+    -webkit-backdrop-filter:none !important;
+  }
+
+  /* pseudo liquid glass — semi-transparent so the background shows through */
+  .pseudo-glass .glass{
+    background:transparent;
+    border-color:rgba(255,255,255,.08);
+    backdrop-filter:blur(22px) saturate(160%);
+    -webkit-backdrop-filter:blur(22px) saturate(160%);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.12),
+      inset 0 0 0 1px rgba(255,255,255,.02),
+      0 16px 48px -16px rgba(0,0,0,.3);
+  }
+  .pseudo-glass .btn{
+    background:transparent;
+    backdrop-filter:blur(22px) saturate(160%);
+    -webkit-backdrop-filter:blur(22px) saturate(160%);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.1),
+      inset 0 0 0 1px rgba(255,255,255,.02),
+      0 8px 24px -12px rgba(0,0,0,.3);
+  }
+
+  .hero{
+    padding-top: max(64px, calc(env(safe-area-inset-top) + 24px));
+    padding-bottom: 40px;
+  }
+  h1{
+    font-family:'Sora',sans-serif;
+    font-size:34px;
+    font-weight:700;
+    margin-bottom:16px;
+    line-height:1.22;
+    letter-spacing:-.015em;
+    max-width:600px;
+  }
+  h1 .yrs{color:var(--accent);}
+  .lead{color:var(--text); font-size:16px; max-width:540px;}
+  .lead b{font-weight:400; font-style:italic;}
+
+  .hero-meta{
+    margin-top:24px; display:flex; flex-wrap:wrap; gap:10px;
+  }
+  /* pills are portaled out of .hero-meta, so they carry their own class */
+  .stat-card{
+    border-radius:12px; padding:9px 13px;
+  }
+  .stat-card .num{font-family:'Sora',sans-serif; font-weight:700; font-size:15px; color:var(--accent); display:block;}
+  .stat-card .label{color:var(--muted); font-size:11px; margin-top:1px;}
+  #moscow-time{font-variant-numeric:tabular-nums;}
+
+  .hero-links{margin-top:22px; display:flex; gap:10px; flex-wrap:wrap;}
+  .btn{
+    font-size:14px; font-weight:600;
+    text-decoration:none;
+    padding:11px 20px;
+    border-radius:12px;
+    color:var(--text);
+    background:rgba(255,255,255,.06);
+    backdrop-filter:blur(14px) saturate(160%);
+    -webkit-backdrop-filter:blur(14px) saturate(160%);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.16),
+      0 8px 24px -12px rgba(0,0,0,.5);
+    transition:transform .15s ease, background .2s ease, border-color .2s ease, box-shadow .2s ease;
+    border:1px solid rgba(255,255,255,.14);
+    cursor:pointer;
+  }
+  .btn:hover{
+    transform:translateY(-2px);
+    background:rgba(255,255,255,.12);
+    border-color:rgba(255,255,255,.3);
+    box-shadow:
+      0 12px 28px -10px rgba(0,0,0,.6),
+      0 0 24px -6px rgba(255,255,255,.18),
+      inset 0 1px 0 rgba(255,255,255,.25);
+  }
+  .btn:active{transform:translateY(0);}
+  
+  /* tinted glass fallback, Discord blurple, matches the shader tint */
+  .btn.primary{
+    background:linear-gradient(165deg, rgba(88,101,242,.38), rgba(88,101,242,.18));
+    border-color:rgba(88,101,242,.55);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.22),
+      0 8px 24px -12px rgba(0,0,0,.5);
+  }
+  .btn.primary:hover{
+    background:linear-gradient(165deg, rgba(88,101,242,.52), rgba(88,101,242,.28));
+    border-color:rgba(88,101,242,.75);
+    box-shadow:
+      0 12px 28px -10px rgba(0,0,0,.55),
+      0 0 28px -6px rgba(88,101,242,.45),
+      inset 0 1px 0 rgba(255,255,255,.3);
+  }
+
+  section{padding:40px 0;}
+  section + section{border-top:1px solid var(--glass-border);}
+  h2{
+    font-family:'Sora',sans-serif;
+    font-size:21px;
+    font-weight:700;
+    margin-bottom:20px;
+    letter-spacing:-.01em;
+  }
+
+  /* no overflow:hidden, the shader canvas bleeds 20px to paint its shadow */
+  .stack-list{display:flex; flex-direction:column; gap:0; border-radius:16px;}
+  .stack-row{
+    display:grid; grid-template-columns:150px 1fr; gap:16px; align-items:start;
+    padding:15px 18px;
+  }
+  .stack-row + .stack-row{border-top:1px solid var(--glass-border);}
+  .stack-row .k{font-weight:700; font-size:13.5px; color:var(--muted);}
+  .stack-row .v{color:var(--muted); font-size:14px;}
+  .stack-row .v b{color:var(--text); font-weight:600;}
+
+  .two-col{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+  .col-card{border-radius:16px; padding:20px 22px;}
+  .col-card h3{font-family:'Sora',sans-serif; font-size:14.5px; font-weight:700; margin-bottom:13px; color:var(--text);}
+  .col-card.do h3{color:var(--good);}
+  .col-card ul{list-style:none; display:flex; flex-direction:column; gap:9px;}
+  .col-card li{font-size:13.5px; color:var(--muted); padding-left:20px; position:relative;}
+  .col-card.do li::before{content:"+"; position:absolute; left:0; color:var(--good); font-weight:700;}
+  .col-card.do li.minus::before{content:"−"; color:var(--bad);}
+  .col-card:not(.do) li::before{content:"−"; position:absolute; left:0; color:var(--bad); font-weight:700;}
+
+  .why-card{border-radius:16px; padding:20px 22px;}
+  .why-card ul{list-style:none; display:flex; flex-direction:column; gap:10px;}
+  .why-card li{font-size:14px; color:var(--muted); padding-left:22px; position:relative;}
+  .why-card li::before{content:"+"; position:absolute; left:0; color:var(--good); font-weight:700;}
+  .why-card li.minus::before{content:"−"; color:var(--bad);}
+
+  .rates{border-radius:16px; padding:22px 24px;}
+  .rate-row{
+    display:flex; align-items:baseline; justify-content:space-between;
+    padding:13px 0;
+    font-size:15px;
+    flex-wrap:wrap; gap:6px;
+  }
+  .rate-row + .rate-row{border-top:1px solid var(--glass-border);}
+  .rate-row .price{font-family:'Sora',sans-serif; font-weight:700; color:var(--accent);}
+  .rate-note{margin-top:16px; font-size:13px; color:var(--muted);}
+  .payment-methods{display:flex; gap:8px; flex-wrap:wrap; margin-top:14px;}
+  .payment-methods span{
+    font-size:12px; font-weight:600; color:var(--text);
+    border-radius:20px; padding:5px 12px; border:1px solid var(--glass-border);
+  }
+
+  .services-list{display:flex; flex-direction:column; gap:12px;}
+  .service-item{border-radius:14px; padding:16px 20px;}
+  .service-item .t{font-weight:700; font-size:14.5px; margin-bottom:5px;}
+  .service-item .d{font-size:13.5px;}
+
+  .tools-row{display:flex; gap:8px; flex-wrap:wrap;}
+  .tools-row span{
+    font-size:12.5px; font-weight:600; color:var(--text);
+    border-radius:20px; padding:7px 14px; border:1px solid var(--glass-border);
+  }
+
+  .guarantee-box{
+    border-radius:16px; padding:26px 24px 22px; font-size:14.5px;
+  }
+  .guarantee-box b{color:var(--accent);}
+  .guarantee-box::after{
+    content:"★";
+    position:absolute; top:-12px; left:20px;
+    background:var(--accent); color:#241a00;
+    width:28px; height:28px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-size:14px; box-shadow:0 2px 6px rgba(0,0,0,.25);
+  }
+
+  /* panel is portaled out, flow spacing lives on the slot */
+  #projects .lg-slot{margin-bottom:16px;}
+  .project{border-radius:16px; padding:20px 22px;}
+  .project h3{font-family:'Sora',sans-serif; font-size:16px; font-weight:700; margin-bottom:12px;}
+  .video-embed{
+    position:relative; width:100%; padding-top:56.25%;
+    border-radius:12px; overflow:hidden;
+    border:1px solid var(--glass-border);
+  }
+  .video-embed iframe{position:absolute; top:0; left:0; width:100%; height:100%; border:none;}
+  .video-link{color:var(--accent); font-size:13.5px; font-weight:600; display:inline-block; margin-top:12px; text-decoration:none;}
+  .video-link:hover{text-decoration:underline;}
+
+  .contact-list{display:flex; flex-direction:column; gap:8px;}
+  .contact-text{font-size:15px; font-weight:700; color:var(--text); user-select:text; cursor:text; width:fit-content;}
+
+  footer{padding:24px 0 48px; text-align:center; color:var(--muted); font-size:13px;}
+
+  @media(max-width:600px){
+    h1{font-size:26px;}
+    .stack-row{grid-template-columns:1fr; gap:4px;}
+    .two-col{grid-template-columns:1fr;}
+  }
